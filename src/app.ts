@@ -25,6 +25,7 @@ app.get("/health", (req, res) => {
 
 const allowedOrigins = [
   "http://localhost:5173",
+  "https://kriscent-team-collab.vercel.app",
   process.env.FRONTEND_URL,
 ].filter(Boolean) as string[];
 
@@ -39,7 +40,7 @@ app.use(
       // Normalize origin and allowedOrigins for comparison (trim trailing slash)
       const normalizedOrigin = origin.replace(/\/$/, "");
       const isAllowed = allowedOrigins.some((allowed) => {
-        const normalizedAllowed = allowed.replace(/\/$/, "");
+        const normalizedAllowed = allowed.replace(/\/$/, "").trim();
         return normalizedAllowed === normalizedOrigin;
       });
 
@@ -47,7 +48,8 @@ app.use(
         callback(null, true);
       } else {
         console.warn(`⚠️ CORS blocked for origin: ${origin}`);
-        callback(new Error("Not allowed by CORS"));
+        console.info(`Allowed origins were: ${JSON.stringify(allowedOrigins)}`);
+        callback(null, false);
       }
     },
     credentials: true,
